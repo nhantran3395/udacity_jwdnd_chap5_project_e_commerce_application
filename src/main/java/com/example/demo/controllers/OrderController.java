@@ -31,7 +31,7 @@ public class OrderController {
 	
 	@PostMapping("/submit/{username}")
 	public ResponseEntity<UserOrder> submit(@PathVariable String username) {
-		User user = userRepository.findByUsername(username);
+		User user = userRepository.findByUsername(username).orElse(null);
 		if(user == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -42,7 +42,7 @@ public class OrderController {
 	
 	@GetMapping("/history/{username}")
 	public ResponseEntity<List<UserOrder>> getOrdersForUser(@PathVariable String username) {
-		User user = userRepository.findByUsername(username);
+		User user = userRepository.findByUsername(username).orElse(null);
 		if(user == null) {
 			return ResponseEntity.notFound().build();
 		}
