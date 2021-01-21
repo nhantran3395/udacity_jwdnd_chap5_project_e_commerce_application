@@ -1,17 +1,23 @@
 package com.example.demo.model.requests;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import java.util.Set;
+
+@Data
 public class CreateUserRequest {
 
-	@JsonProperty
+	@NotBlank
+	@Email
 	private String username;
+	@NotBlank
+	private String fullName;
+	@NotBlank
+	private String password;
+	@NotBlank
+	private String rePassword;
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	private Set<String> authorities;
 }

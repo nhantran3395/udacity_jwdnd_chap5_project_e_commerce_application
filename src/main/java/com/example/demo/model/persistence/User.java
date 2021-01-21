@@ -1,22 +1,25 @@
 package com.example.demo.model.persistence;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.example.demo.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,31 +34,31 @@ public class User {
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
 	@JsonIgnore
     private Cart cart;
-	
-	public Cart getCart() {
-		return cart;
+
+	private boolean enabled = true;
+
+	private String password;
+
+	@Transient
+	private Set<Role> authorities = new HashSet<>();
+
+	@CreatedDate
+	private LocalDateTime createdAt;
+	@LastModifiedDate
+	private LocalDateTime modifiedAt;
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return enabled;
 	}
 
-	public void setCart(Cart cart) {
-		this.cart = cart;
+	@Override
+	public boolean isAccountNonLocked() {
+		return enabled;
 	}
 
-	public long getId() {
-		return id;
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return enabled;
 	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	
-	
 }
