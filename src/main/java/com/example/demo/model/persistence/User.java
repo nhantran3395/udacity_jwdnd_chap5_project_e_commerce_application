@@ -31,7 +31,11 @@ public class User implements UserDetails {
 	@Column(nullable = false, unique = true)
 	@JsonProperty
 	private String username;
-	
+
+	@Column(nullable = false, unique = false)
+	@JsonProperty
+	private String fullName;
+
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
 	@JsonIgnore
