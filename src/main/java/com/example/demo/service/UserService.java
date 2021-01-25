@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.ValidationException;
-import java.util.HashSet;
 
 @Service
 @Transactional
@@ -31,9 +30,6 @@ public class UserService {
         }
         if (!request.getPassword().equals(request.getRePassword())) {
             throw new ValidationException("Passwords don't match!");
-        }
-        if (request.getAuthorities() == null) {
-            request.setAuthorities(new HashSet<>());
         }
 
         User user = mapper.create(request);

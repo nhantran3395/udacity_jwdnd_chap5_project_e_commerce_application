@@ -2,17 +2,17 @@ package com.example.demo.model.persistence;
 
 import javax.persistence.*;
 
-import com.example.demo.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 @Getter
@@ -39,13 +39,13 @@ public class User implements UserDetails {
 
 	private String password;
 
-	@Transient
-	private Set<Role> authorities = new HashSet<>();
-
 	@CreatedDate
 	private LocalDateTime createdAt;
 	@LastModifiedDate
 	private LocalDateTime modifiedAt;
+
+	@Override
+	public Set<GrantedAuthority> getAuthorities() {return Collections.emptySet();}
 
 	@Override
 	public boolean isAccountNonExpired() {
