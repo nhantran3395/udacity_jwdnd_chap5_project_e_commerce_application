@@ -74,6 +74,37 @@ public class TestUserRequest {
         ;
     }
 
+    @Test
+    public void checkRegisterUserFailed_usernameFailedEmailConstraint () throws Exception {
+        mvc.perform(post("/api/user/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getCreateUserRequestBody("bernard.harvey","Bernard Harvey","bharv10691","bharv106911"))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.apierror.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.apierror.message").value("Validation error"))
+                .andExpect(jsonPath("$.apierror.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.apierror.subErrors.[0].field").value("username"))
+                .andExpect(jsonPath("$.apierror.subErrors.[0].message").value("must be a well-formed email address"));
+        ;
+    }
+
+    @Test
+    public void checkRegisterUserFailed_passwordFailedLengthConstraint () throws Exception {
+        mvc.perform(post("/api/user/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv","bharv"))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.apierror.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.apierror.message").value("Validation error"))
+                .andExpect(jsonPath("$.apierror.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.apierror.subErrors.[0].field").value("password"))
+                .andExpect(jsonPath("$.apierror.subErrors.[0].message").value("size must be between 8 and 20"));
+        ;
+    }
 
     private String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
         return "{\n" +
