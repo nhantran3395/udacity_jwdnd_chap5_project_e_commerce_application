@@ -106,6 +106,22 @@ public class TestUserRequest {
         ;
     }
 
+    @Test
+    public void checkLoginUserSuccess () throws Exception {
+        mvc.perform(post("/api/user/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+        mvc.perform(post("/api/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getAuthRequestBody("bernard.harvey@gmail.com","bharv10691"))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(header().exists("Authorization"))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        ;
+    }
+
     private String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
         return "{\n" +
                 "    \"username\":" + "\"" + username + "\"" + ",\n" +
@@ -114,4 +130,12 @@ public class TestUserRequest {
                 "    \"rePassword\":" + "\"" + rePassword + "\"" + "\n" +
                 "}";
     }
+
+    private String getAuthRequestBody (String username, String password){
+        return "{\n" +
+                "    \"username\":" + "\"" + username + "\"" + ",\n" +
+                "    \"password\":" + "\"" + password + "\"" + "\n" +
+                "}";
+    }
+
 }
