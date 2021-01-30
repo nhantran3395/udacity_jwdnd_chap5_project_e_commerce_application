@@ -1,6 +1,8 @@
 package com.example.demo.model.persistence;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,12 +29,14 @@ public class User implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty
 	private long id;
-	
-	@Column(nullable = false, unique = true)
+
+	@Column(unique = true)
+	@NotBlank
 	@JsonProperty
+
 	private String username;
 
-	@Column(nullable = false, unique = false)
+	@NotBlank
 	@JsonProperty
 	private String fullName;
 
@@ -45,6 +49,7 @@ public class User implements UserDetails {
 	@JsonIgnore
 	private boolean enabled = true;
 
+	@NotNull
 	@JsonIgnore
 	@ToString.Exclude
 	private String password;
