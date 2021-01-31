@@ -10,6 +10,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -186,7 +187,67 @@ public class ECommerceApplicationTests {
 		;
 	}
 
-	private String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
+	@Test
+	public void checkFindAllItemsFailed_Unauthenticated () throws Exception {
+		mvc.perform(get("/api/item"))
+				.andExpect(status().isUnauthorized())
+		;
+	}
+
+	@Test
+	public void checkFindItemByIdFailed_Unauthenticated () throws Exception {
+		mvc.perform(get("/api/item/1"))
+				.andExpect(status().isUnauthorized())
+		;
+	}
+
+	@Test
+	public void checkFindItemByNameFailed_Unauthenticated () throws Exception {
+		mvc.perform(get("/api/item/watch"))
+				.andExpect(status().isUnauthorized())
+		;
+	}
+
+	@Test
+	public void checkFindAllItemsSuccess () throws Exception {
+		mvc.perform(get("/api/item").header("Authorization",getAuthToken()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect((jsonPath("$",hasSize(3))))
+				.andExpect((jsonPath("$.[0].id").value(1)))
+				.andExpect((jsonPath("$.[0].name").value("TISSOT SEASTAR 1000 CHRONOGRAPH")))
+				.andExpect((jsonPath("$.[1].id").value(2)))
+				.andExpect((jsonPath("$.[1].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.[2].id").value(3)))
+				.andExpect((jsonPath("$.[2].name").value("TISSOT LE LOCLE POWERMATIC 80")))
+		;
+	}
+
+	@Test
+	public void checkFindItemByIdSuccess () throws Exception {
+		mvc.perform(get("/api/item/3").header("Authorization",getAuthToken()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect((jsonPath("$.id").value(3)))
+				.andExpect((jsonPath("$.name").value("TISSOT LE LOCLE POWERMATIC 80")))
+				.andExpect((jsonPath("$.price").value(890)))
+				.andExpect((jsonPath("$.description").value("The name Le Locle seems to be a reliable ingredient of success.")))
+		;
+	}
+
+	@Test
+	public void checkFindItemByNameSuccess () throws Exception {
+		mvc.perform(get("/api/item/name/TISSOT LE LOCLE POWERMATIC 80").header("Authorization",getAuthToken()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect((jsonPath("$.[0].id").value(3)))
+				.andExpect((jsonPath("$.[0].name").value("TISSOT LE LOCLE POWERMATIC 80")))
+				.andExpect((jsonPath("$.[0].price").value(890)))
+				.andExpect((jsonPath("$.[0].description").value("The name Le Locle seems to be a reliable ingredient of success.")))
+		;
+	}
+
+	private static String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
 		return "{\n" +
 				"    \"username\":" + "\"" + username + "\"" + ",\n" +
 				"    \"fullName\":" + "\"" + fullName + "\"" + ",\n" +
@@ -195,11 +256,14 @@ public class ECommerceApplicationTests {
 				"}";
 	}
 
-	private String getAuthRequestBody (String username, String password){
+	private static String getAuthRequestBody (String username, String password){
 		return "{\n" +
 				"    \"username\":" + "\"" + username + "\"" + ",\n" +
 				"    \"password\":" + "\"" + password + "\"" + "\n" +
 				"}";
 	}
 
+	private static String getAuthToken () {
+		return "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxLG5oYW50aGFuaHRAZ21haWwuY29tIiwiaXNzIjoiZXhhbXBsZS5pbyIsImlhdCI6MTYxMjA3NzAwMiwiZXhwIjoxNjEyNjgxODAyfQ.S7lPuiWXD4wvwQ0y3QyrPrpNXf5ih_0ECqjF7upf_2AnANZLBFrQnycpmCGXNI2dK6GPI4MAH48VazAQJdILww";
+	}
 }
