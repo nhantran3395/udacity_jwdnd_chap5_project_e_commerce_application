@@ -2,6 +2,7 @@ package com.example.demo.controllers;
 
 import java.util.List;
 
+import com.example.demo.errorhandling.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,11 @@ public class ItemController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
-		Item item = itemRepository.findById(id).orElse(null);
+		Item item = itemRepository.findById(id).orElseThrow(()->{return new EntityNotFoundException(Item.class,"id",id.toString()); });
 
 		log.info("GET item/" + id);
 		log.info("find item by id");
-		log.info(item == null? null : item.toString());
+		log.info(item.toString());
 
 		return ResponseEntity.of(itemRepository.findById(id));
 	}
@@ -47,13 +48,15 @@ public class ItemController {
 	public ResponseEntity<List<Item>> getItemsByName(@PathVariable String name) {
 		List<Item> items = itemRepository.findByName(name);
 
+		if(items.isEmpty()){
+			throw new EntityNotFoundException(Item.class,"name",name);
+		}
+
 		log.info("GET item/name/" + name);
 		log.info("find items by name");
 		log.info(items.toString());
 
-		return items.isEmpty() ? ResponseEntity.notFound().build()
-				: ResponseEntity.ok(items);
-			
+		return ResponseEntity.ok(items);
 	}
 	
 }
