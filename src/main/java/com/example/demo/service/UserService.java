@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.errorhandling.EntityNotFoundException;
 import com.example.demo.model.mapper.CreateUserRequestToUserEntityMapper;
 import com.example.demo.model.persistence.Cart;
 import com.example.demo.model.persistence.User;
@@ -53,11 +54,11 @@ public class UserService {
     }
 
     public User findByUsername(String username){
-        return userRepository.findByUsername(username).orElse(null);
+        return userRepository.findByUsername(username).orElseThrow(()->{return new EntityNotFoundException(User.class,"username",username); });
     }
 
-    public User findById(long id){
-        return userRepository.findById(id).orElse(null);
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow(()->{return new EntityNotFoundException(User.class,"id", id.toString()); });
     }
 
 }
