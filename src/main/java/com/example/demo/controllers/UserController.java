@@ -45,9 +45,9 @@ public class UserController {
 
 		log.info("GET user/id/" + id);
 		log.info("find user by id");
-		log.info(user == null ? null : user.toString());
+		log.info(user.toString());
 
-		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+		return ResponseEntity.ok(user);
 	}
 	
 	@GetMapping("/{username}")
@@ -56,9 +56,9 @@ public class UserController {
 
 		log.info("GET user/" + username);
 		log.info("find user by name");
-		log.info(user == null ? null : user.toString());
+		log.info(user.toString());
 
-		return user == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(user);
+		return ResponseEntity.ok(user);
 	}
 	
 	@PostMapping("/create")
