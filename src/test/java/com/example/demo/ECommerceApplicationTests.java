@@ -269,6 +269,128 @@ public class ECommerceApplicationTests {
 		;
 	}
 
+	@Test
+	public void checkAddItemToCartFailed_Unauthenticated () throws Exception {
+		mvc.perform(get("/api/cart/addToCart"))
+				.andExpect(status().isUnauthorized())
+		;
+	}
+
+	@Test
+	public void checkRemoveItemFromCartFailed_Unauthenticated () throws Exception {
+		mvc.perform(get("/api/cart/removeFromCart"))
+				.andExpect(status().isUnauthorized())
+		;
+	}
+
+	@Test
+	public void checkAddItemToCartSuccess () throws Exception {
+		mvc.perform(post("/api/user/create")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",2L,1L)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.items",hasSize(1)))
+				.andExpect((jsonPath("$.items.[0].id").value(2)))
+				.andExpect((jsonPath("$.items.[0].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.items.[0].price").value(375)))
+				.andExpect((jsonPath("$.items.[0].description").value("The Tissot Gentleman is a multi-purpose watch, both ergonomic and elegant in any circumstance.")))
+				.andExpect(jsonPath("$.user.id").value(1))
+				.andExpect(jsonPath("$.user.username").value("bernard.harvey@gmail.com"))
+				.andExpect(jsonPath("$.user.fullName").value("Bernard Harvey"))
+				.andExpect(jsonPath("$.user.createdAt").isNotEmpty());
+		;
+
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",1L,1L)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.items",hasSize(2)))
+				.andExpect((jsonPath("$.items.[0].id").value(2)))
+				.andExpect((jsonPath("$.items.[0].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.items.[0].price").value(375)))
+				.andExpect((jsonPath("$.items.[0].description").value("The Tissot Gentleman is a multi-purpose watch, both ergonomic and elegant in any circumstance.")))
+				.andExpect((jsonPath("$.items.[1].id").value(1)))
+				.andExpect((jsonPath("$.items.[1].name").value("TISSOT SEASTAR 1000 CHRONOGRAPH")))
+				.andExpect((jsonPath("$.items.[1].price").value(525)))
+				.andExpect((jsonPath("$.items.[1].description").value("The Tissot Seastar 1000 merges style and performance without compromising either.")))
+				.andExpect(jsonPath("$.user.id").value(1))
+				.andExpect(jsonPath("$.user.username").value("bernard.harvey@gmail.com"))
+				.andExpect(jsonPath("$.user.fullName").value("Bernard Harvey"))
+				.andExpect(jsonPath("$.user.createdAt").isNotEmpty());
+		;
+
+	}
+
+	@Test
+	public void checkRemoveItemFromCartSuccess () throws Exception {
+		mvc.perform(post("/api/user/create")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",2L,1L)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.items",hasSize(1)))
+				.andExpect((jsonPath("$.items.[0].id").value(2)))
+				.andExpect((jsonPath("$.items.[0].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.items.[0].price").value(375)))
+				.andExpect((jsonPath("$.items.[0].description").value("The Tissot Gentleman is a multi-purpose watch, both ergonomic and elegant in any circumstance.")))
+				.andExpect(jsonPath("$.user.id").value(1))
+				.andExpect(jsonPath("$.user.username").value("bernard.harvey@gmail.com"))
+				.andExpect(jsonPath("$.user.fullName").value("Bernard Harvey"))
+				.andExpect(jsonPath("$.user.createdAt").isNotEmpty());
+		;
+
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",1L,1L)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.items",hasSize(2)))
+				.andExpect((jsonPath("$.items.[0].id").value(2)))
+				.andExpect((jsonPath("$.items.[0].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.items.[0].price").value(375)))
+				.andExpect((jsonPath("$.items.[0].description").value("The Tissot Gentleman is a multi-purpose watch, both ergonomic and elegant in any circumstance.")))
+				.andExpect((jsonPath("$.items.[1].id").value(1)))
+				.andExpect((jsonPath("$.items.[1].name").value("TISSOT SEASTAR 1000 CHRONOGRAPH")))
+				.andExpect((jsonPath("$.items.[1].price").value(525)))
+				.andExpect((jsonPath("$.items.[1].description").value("The Tissot Seastar 1000 merges style and performance without compromising either.")))
+				.andExpect(jsonPath("$.user.id").value(1))
+				.andExpect(jsonPath("$.user.username").value("bernard.harvey@gmail.com"))
+				.andExpect(jsonPath("$.user.fullName").value("Bernard Harvey"))
+				.andExpect(jsonPath("$.user.createdAt").isNotEmpty());
+		;
+
+		mvc.perform(post("/api/cart/removeFromCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",1L,1L)))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.items",hasSize(1)))
+				.andExpect((jsonPath("$.items.[0].id").value(2)))
+				.andExpect((jsonPath("$.items.[0].name").value("TISSOT GENTLEMAN")))
+				.andExpect((jsonPath("$.items.[0].price").value(375)))
+				.andExpect((jsonPath("$.items.[0].description").value("The Tissot Gentleman is a multi-purpose watch, both ergonomic and elegant in any circumstance.")))
+				.andExpect(jsonPath("$.user.id").value(1))
+				.andExpect(jsonPath("$.user.username").value("bernard.harvey@gmail.com"))
+				.andExpect(jsonPath("$.user.fullName").value("Bernard Harvey"))
+				.andExpect(jsonPath("$.user.createdAt").isNotEmpty());
+		;
+	}
+
 	private static String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
 		return "{\n" +
 				"    \"username\":" + "\"" + username + "\"" + ",\n" +
@@ -285,7 +407,17 @@ public class ECommerceApplicationTests {
 				"}";
 	}
 
+	private static String getModifyRequestBody (String username, Long itemId, Long quantity){
+		return "{\n" +
+				"    \"username\":" + "\"" + username + "\"" + ",\n" +
+				"    \"itemId\":" + "\"" + itemId + "\"" + ",\n" +
+				"    \"quantity\":" + "\"" + quantity + "\"" + "\n" +
+				"}";
+	}
+
 	private static String getAuthToken () {
 		return "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxLG5oYW50aGFuaHRAZ21haWwuY29tIiwiaXNzIjoiZXhhbXBsZS5pbyIsImlhdCI6MTYxMjA3NzAwMiwiZXhwIjoxNjEyNjgxODAyfQ.S7lPuiWXD4wvwQ0y3QyrPrpNXf5ih_0ECqjF7upf_2AnANZLBFrQnycpmCGXNI2dK6GPI4MAH48VazAQJdILww";
 	}
+
+
 }
