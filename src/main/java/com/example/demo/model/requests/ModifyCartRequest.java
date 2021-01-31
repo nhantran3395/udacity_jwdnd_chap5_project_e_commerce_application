@@ -20,7 +20,7 @@ public class ModifyCartRequest {
 	
 	@JsonProperty
 	@NotBlank
-	private long itemId;
+	private Long itemId;
 	
 	@JsonProperty
 	@NotBlank
