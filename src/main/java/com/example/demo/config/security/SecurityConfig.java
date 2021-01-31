@@ -1,5 +1,7 @@
 package com.example.demo.config.security;
 
+import com.example.demo.errorhandling.EntityNotFoundException;
+import com.example.demo.model.persistence.User;
 import com.example.demo.model.persistence.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure (AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(username -> userRepository
                 .findByUsername(username)
-                .orElse(null));
+                .orElseThrow(()->{return new EntityNotFoundException(User.class,"username",username);}
+                ));
     }
 
 
