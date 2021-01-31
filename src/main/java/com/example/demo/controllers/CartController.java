@@ -1,12 +1,10 @@
 package com.example.demo.controllers;
 
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import com.example.demo.errorhandling.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,15 +40,11 @@ public class CartController {
 
 		User user = userRepository.findByUsername(request.getUsername()).orElseThrow(()->{return new EntityNotFoundException(User.class,"username", request.getUsername());});
 
-		Optional<Item> item = itemRepository.findById(request.getItemId());
-		if(!item.isPresent()) {
-			log.info("item not exist: id = " + request.getItemId());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+		Item item = itemRepository.findById(request.getItemId()).orElseThrow(()->{return new EntityNotFoundException(Item.class,"id", request.getItemId().toString());});
 
 		Cart cart = user.getCart();
 		IntStream.range(0, request.getQuantity())
-			.forEach(i -> cart.addItem(item.get()));
+			.forEach(i -> cart.addItem(item));
 		cartRepository.save(cart);
 
 		log.info(cart.toString());
@@ -64,15 +58,12 @@ public class CartController {
 
 		User user = userRepository.findByUsername(request.getUsername()).orElseThrow(()->{return new EntityNotFoundException(User.class,"username", request.getUsername());});
 
-		Optional<Item> item = itemRepository.findById(request.getItemId());
-		if(!item.isPresent()) {
-			log.info("item not exist: id = " + request.getItemId());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+		Item item = itemRepository.findById(request.getItemId()).orElseThrow(()->{return new EntityNotFoundException(Item.class,"id", request.getItemId().toString());});;
+
 
 		Cart cart = user.getCart();
 		IntStream.range(0, request.getQuantity())
-			.forEach(i -> cart.removeItem(item.get()));
+			.forEach(i -> cart.removeItem(item));
 		cartRepository.save(cart);
 
 		log.info(cart.toString());
