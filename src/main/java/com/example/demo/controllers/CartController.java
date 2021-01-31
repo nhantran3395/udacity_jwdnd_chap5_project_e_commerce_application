@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import com.example.demo.errorhandling.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,11 +40,7 @@ public class CartController {
 		log.info("POST cart/addToCart");
 		log.info("add item to cart: " + request);
 
-		User user = userRepository.findByUsername(request.getUsername()).orElse(null);
-		if(user == null) {
-			log.info("user not exist: " + request.getUsername());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+		User user = userRepository.findByUsername(request.getUsername()).orElseThrow(()->{return new EntityNotFoundException(User.class,"username", request.getUsername());});
 
 		Optional<Item> item = itemRepository.findById(request.getItemId());
 		if(!item.isPresent()) {
@@ -65,11 +62,7 @@ public class CartController {
 		log.info("POST cart/removeFromCart");
 		log.info("remove item from cart: " + request);
 
-		User user = userRepository.findByUsername(request.getUsername()).orElse(null);
-		if(user == null) {
-			log.info("user not exist: " + request.getUsername());
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+		User user = userRepository.findByUsername(request.getUsername()).orElseThrow(()->{return new EntityNotFoundException(User.class,"username", request.getUsername());});
 
 		Optional<Item> item = itemRepository.findById(request.getItemId());
 		if(!item.isPresent()) {
