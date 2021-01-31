@@ -391,6 +391,66 @@ public class ECommerceApplicationTests {
 		;
 	}
 
+	@Test
+	public void checkAddItemToCartFailed_UserNotFound () throws Exception {
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey1@gmail.com",1L,1L)))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("User was not found for parameters {username=bernard.harvey1@gmail.com}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
+	@Test
+	public void checkRemoveItemFromCartFailed_UserNotFound () throws Exception {
+		mvc.perform(post("/api/cart/removeFromCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey1@gmail.com",1L,1L)))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("User was not found for parameters {username=bernard.harvey1@gmail.com}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
+	@Test
+	public void checkAddItemToCartFailed_ItemNotFound () throws Exception {
+		mvc.perform(post("/api/user/create")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+		mvc.perform(post("/api/cart/addToCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",4L,1L)))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("Item was not found for parameters {id=4}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
+	@Test
+	public void checkRemoveItemFromCartFailed_ItemNotFound () throws Exception {
+		mvc.perform(post("/api/user/create")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+		mvc.perform(post("/api/cart/removeFromCart").header("Authorization",getAuthToken())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(getModifyRequestBody("bernard.harvey@gmail.com",4L,1L)))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("Item was not found for parameters {id=4}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
 	private static String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
 		return "{\n" +
 				"    \"username\":" + "\"" + username + "\"" + ",\n" +
