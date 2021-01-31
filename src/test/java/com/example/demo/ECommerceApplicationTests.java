@@ -247,6 +247,28 @@ public class ECommerceApplicationTests {
 		;
 	}
 
+	@Test
+	public void checkFindItemByIdFailed_ItemNotFound () throws Exception {
+		mvc.perform(get("/api/item/4").header("Authorization",getAuthToken()))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("Item was not found for parameters {id=4}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
+	@Test
+	public void checkFindItemByNameFailed_ItemNotFound () throws Exception {
+		mvc.perform(get("/api/item/name/TISSOT").header("Authorization",getAuthToken()))
+				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+				.andExpect(jsonPath("$.apierror.message").value("Item was not found for parameters {name=TISSOT}"))
+				.andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+		;
+	}
+
 	private static String getCreateUserRequestBody (String username, String fullName, String password, String rePassword){
 		return "{\n" +
 				"    \"username\":" + "\"" + username + "\"" + ",\n" +
