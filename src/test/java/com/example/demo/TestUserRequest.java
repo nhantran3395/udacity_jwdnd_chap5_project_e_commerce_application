@@ -107,18 +107,84 @@ public class TestUserRequest {
     }
 
     @Test
-    public void checkLoginUserSuccess () throws Exception {
+    public void checkLoginUserFailed_UserDoesNotExist () throws Exception {
+        mvc.perform(post("/api/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getAuthRequestBody("bernard.harvey1@gmail.com","bharv10691"))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(header().doesNotExist("Authorization"))
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+        .andExpect(jsonPath("$.apierror.message").value("User was not found for parameters {username=bernard.harvey1@gmail.com}"))
+        .andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+    }
+
+    @Test
+    public void checkLoginUserFailed_PasswordIncorrect () throws Exception {
         mvc.perform(post("/api/user/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
 
         mvc.perform(post("/api/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(getAuthRequestBody("bernard.harvey@gmail.com","bharv10691"))
+                .content(getAuthRequestBody("bernard.harvey@gmail.com","bharv106911"))
                 .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(header().exists("Authorization"))
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isUnauthorized())
+                .andExpect(header().doesNotExist("Authorization"));
+    }
+
+    @Test
+    public void checkFindUserByIdSuccess () throws Exception {
+        mvc.perform(post("/api/user/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+        mvc.perform(get("/api/user/id/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value("bernard.harvey@gmail.com"))
+                .andExpect(jsonPath("$.fullName").value("Bernard Harvey"))
+                .andExpect(jsonPath("$.createdAt").isNotEmpty());
+        ;
+    }
+
+    @Test
+    public void checkFindUserByUsernameSuccess () throws Exception {
+        mvc.perform(post("/api/user/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getCreateUserRequestBody("bernard.harvey@gmail.com","Bernard Harvey","bharv10691","bharv10691")));
+
+        mvc.perform(get("/api/user/bernard.harvey@gmail.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.username").value("bernard.harvey@gmail.com"))
+                .andExpect(jsonPath("$.fullName").value("Bernard Harvey"))
+                .andExpect(jsonPath("$.createdAt").isNotEmpty());
+        ;
+    }
+
+    @Test
+    public void checkFindUserByIdFailed_UserNotFound () throws Exception {
+        mvc.perform(get("/api/user/id/2"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.apierror.message").value("User was not found for parameters {id=2}"))
+                .andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
+        ;
+    }
+
+    @Test
+    public void checkFindUserByUsername_UserNotFound () throws Exception {
+        mvc.perform(get("/api/user/bernard.harvey1@gmail.com"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.apierror.status").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.apierror.message").value("User was not found for parameters {username=bernard.harvey1@gmail.com}"))
+                .andExpect(jsonPath("$.apierror.timestamp").isNotEmpty());
         ;
     }
 
