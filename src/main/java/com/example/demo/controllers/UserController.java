@@ -41,10 +41,11 @@ public class UserController {
 
 	@GetMapping("/id/{id}")
 	public ResponseEntity<User> findById(@PathVariable Long id) {
-		User user = userService.findById(id);
-
 		log.info("GET user/id/" + id);
 		log.info("find user by id");
+
+		User user = userService.findById(id);
+
 		log.info(user.toString());
 
 		return ResponseEntity.ok(user);
@@ -52,10 +53,11 @@ public class UserController {
 	
 	@GetMapping("/{username}")
 	public ResponseEntity<User> findByUserName(@PathVariable String username) {
-		User user = userService.findByUsername(username);
-
 		log.info("GET user/" + username);
 		log.info("find user by name");
+
+		User user = userService.findByUsername(username);
+
 		log.info(user.toString());
 
 		return ResponseEntity.ok(user);
@@ -63,10 +65,11 @@ public class UserController {
 	
 	@PostMapping("/create")
 	public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
-		User user = userService.create(createUserRequest);
-
 		log.info("POST user/create");
 		log.info("create new user");
+
+		User user = userService.create(createUserRequest);
+
 		log.info(user.toString());
 
 		return new ResponseEntity<User> (user,HttpStatus.CREATED);
