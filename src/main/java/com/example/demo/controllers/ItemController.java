@@ -24,10 +24,11 @@ public class ItemController {
 	
 	@GetMapping
 	public ResponseEntity<List<Item>> getItems() {
-		List<Item> items = itemRepository.findAll();
-
 		log.info("GET item");
 		log.info("find all items");
+
+		List<Item> items = itemRepository.findAll();
+
 		log.info(items.toString());
 
 		return ResponseEntity.ok(items);
@@ -35,10 +36,11 @@ public class ItemController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Item> getItemById(@PathVariable Long id) {
-		Item item = itemRepository.findById(id).orElseThrow(()->{return new EntityNotFoundException(Item.class,"id",id.toString()); });
-
 		log.info("GET item/" + id);
 		log.info("find item by id");
+
+		Item item = itemRepository.findById(id).orElseThrow(()->{return new EntityNotFoundException(Item.class,"id",id.toString()); });
+
 		log.info(item.toString());
 
 		return ResponseEntity.of(itemRepository.findById(id));
@@ -46,14 +48,15 @@ public class ItemController {
 	
 	@GetMapping("/name/{name}")
 	public ResponseEntity<List<Item>> getItemsByName(@PathVariable String name) {
+		log.info("GET item/name/" + name);
+		log.info("find items by name");
+
 		List<Item> items = itemRepository.findByName(name);
 
 		if(items.isEmpty()){
 			throw new EntityNotFoundException(Item.class,"name",name);
 		}
 
-		log.info("GET item/name/" + name);
-		log.info("find items by name");
 		log.info(items.toString());
 
 		return ResponseEntity.ok(items);
