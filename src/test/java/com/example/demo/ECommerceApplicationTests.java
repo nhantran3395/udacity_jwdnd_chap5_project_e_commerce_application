@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.config.security.JwtTokenUtil;
+import com.example.demo.model.persistence.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class ECommerceApplicationTests {
 
 	@Autowired
 	private MockMvc mvc;
+
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
 	@Test
 	public void checkRegisterUserSuccess () throws Exception {
@@ -475,9 +480,11 @@ public class ECommerceApplicationTests {
 				"}";
 	}
 
-	private static String getAuthToken () {
-		return "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxLG5oYW50aGFuaHRAZ21haWwuY29tIiwiaXNzIjoiZXhhbXBsZS5pbyIsImlhdCI6MTYxMjA3NzAwMiwiZXhwIjoxNjEyNjgxODAyfQ.S7lPuiWXD4wvwQ0y3QyrPrpNXf5ih_0ECqjF7upf_2AnANZLBFrQnycpmCGXNI2dK6GPI4MAH48VazAQJdILww";
+	private String getAuthToken () {
+		User user = new User();
+		user.setUsername("testuser");
+		user.setPassword("password");
+
+		return "Bearer " + jwtTokenUtil.generateAccessToken(user);
 	}
-
-
 }
