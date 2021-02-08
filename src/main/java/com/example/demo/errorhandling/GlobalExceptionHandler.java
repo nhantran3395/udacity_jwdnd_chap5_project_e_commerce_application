@@ -48,6 +48,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
         ApiError apiError = new ApiError(BAD_REQUEST, error, ex);
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -75,6 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex);
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -99,6 +101,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         apiError.addValidationErrors(ex.getBindingResult().getFieldErrors());
         apiError.addValidationError(ex.getBindingResult().getGlobalErrors());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -111,11 +114,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
      */
     @ExceptionHandler(javax.validation.ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(
-            javax.validation.ConstraintViolationException ex) {
+            javax.validation.ConstraintViolationException ex, WebRequest request) {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage("Validation error");
         apiError.addValidationErrors(ex.getConstraintViolations());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -128,10 +132,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
      */
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(
-            EntityNotFoundException ex) {
+            EntityNotFoundException ex, WebRequest request) {
         ApiError apiError = new ApiError(NOT_FOUND);
         apiError.setMessage(ex.getMessage());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -153,6 +158,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, error, ex);
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -172,6 +178,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
 
         ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex);
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -192,6 +199,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         apiError.setMessage(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
         apiError.setDebugMessage(ex.getMessage());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -200,7 +208,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
      * Handle javax.persistence.EntityNotFoundException
      */
     @ExceptionHandler(javax.persistence.EntityNotFoundException.class)
-    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex) {
+    protected ResponseEntity<Object> handleEntityNotFound(javax.persistence.EntityNotFoundException ex, WebRequest request) {
+        log.error(request.getDescription(true));
         return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex));
     }
 
@@ -213,6 +222,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
                                                                   WebRequest request) {
+        log.error(request.getDescription(true));
+
         if (ex.getCause() instanceof ConstraintViolationException) {
             ApiError apiError = new ApiError(HttpStatus.CONFLICT, "Database error", ex.getCause());
 
@@ -238,6 +249,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
         apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
         apiError.setDebugMessage(ex.getMessage());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
@@ -251,10 +263,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler{
      * Handle ValidationException
      */
     @ExceptionHandler(ValidationException.class)
-    protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
+    protected ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
         ApiError apiError = new ApiError(BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
 
+        log.error(request.getDescription(true));
         log.error(apiError.toString());
         return buildResponseEntity(apiError);
     }
